@@ -7,12 +7,16 @@ use Marjose123\FilamentWebhookServer\Listeners\WebhookFailedListener;
 use Marjose123\FilamentWebhookServer\Listeners\WebhookSuccessListener;
 use Spatie\WebhookServer\Events\FinalWebhookCallFailedEvent;
 use Spatie\WebhookServer\Events\WebhookCallSucceededEvent;
+use Spatie\WebhookServer\Events\WebhookCallFailedEvent;
 
 class EventServiceProvider extends ServiceProvider
 {
     protected $listen = [
         WebhookCallSucceededEvent::class => [
             WebhookSuccessListener::class,
+        ],
+        WebhookCallFailedEvent::class => [
+            WebhookFailedListener::class,
         ],
         FinalWebhookCallFailedEvent::class => [
             WebhookFailedListener::class,

@@ -78,6 +78,6 @@ class ApiResponseBuilder
             'data' => $payload,
         ];
 
-        return (object)$apiReponse;
+        return $apiReponse['data'];
     }
 }
