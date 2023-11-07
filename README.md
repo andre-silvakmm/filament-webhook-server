@@ -15,7 +15,7 @@ This package provides a Filament page that you can send webhook server . You'll 
 You can install the package via composer:
 
 ```bash
-composer require marjose123/filament-webhook-server:"^2.0"
+composer require andresilva/filament-webhook-server
 ```
 
 You can publish and run the migrations with:
