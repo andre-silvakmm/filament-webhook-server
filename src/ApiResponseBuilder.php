@@ -78,6 +78,6 @@ class ApiResponseBuilder
             'data' => $payload,
         ];
 
-        return $apiReponse['data'];
+        return json_decode(json_encode($payload), true);//$apiReponse;
     }
 }
