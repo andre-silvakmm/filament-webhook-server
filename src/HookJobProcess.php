@@ -30,7 +30,7 @@ class HookJobProcess
     public function send(): void
     {
         foreach ($this->search as $webhookClient) {
-            WebhookCall::create()
+            $webhook = WebhookCall::create()
                 ->url($webhookClient->url)
                 // ->maximumTries(3)
                 ->meta(['webhookClient' => $webhookClient->id])
@@ -38,10 +38,15 @@ class HookJobProcess
                 ->useHttpVerb($webhookClient->method)
                 ->verifySsl($webhookClient->verifySsl)
                 ->withHeaders($webhookClient->header)
-                ->payload($this->payload($this->model, $this->event, $this->module, $webhookClient->data_option))
-                // ->throwExceptionOnFailure()
-                // ->payload($webhookClient->data_option)
-                ->dispatch();
+                ->payload($this->payload($this->model, $this->event, $this->module, $webhookClient->data_option, $webhookClient->data_type));
+            // ->throwExceptionOnFailure()
+            // ->payload($webhookClient->data_option);
+
+            if ($webhookClient->sync) {
+                $webhook->dispatchSync();
+            } else {
+                $webhook->dispatch();
+            }
         }
     }
 }

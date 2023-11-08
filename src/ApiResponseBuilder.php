@@ -13,6 +13,8 @@ class ApiResponseBuilder
 
     private ?string $dataOption;
 
+    private ?string $dataType;
+
     private ?string $event;
 
     private ?string $module;
@@ -71,13 +73,30 @@ class ApiResponseBuilder
                 ? (object)$this->model->toWebhookPayload() : [],
             default => [],
         };
-        $apiReponse = [
+        $apiResponse = [
             'event' => $this->event ?? null,
             'module' => $this->module,
             'triggered_at' => Carbon::now()->timezone(config('app.timezone')),
+            'tenant' => tenant() !== null ? tenant()->id : 'central',
             'data' => $payload,
         ];
 
-        return json_decode(json_encode($payload), true);//$apiReponse;
+        if ($this->dataType === 'webhook') {
+            return json_decode(json_encode($apiResponse), true);
+        }
+
+        return json_decode(json_encode($payload), true); //$apiReponse;
+    }
+
+    /**
+     * Set the value of dataType
+     *
+     * @return  self
+     */
+    public function setDataType($dataType)
+    {
+        $this->dataType = $dataType;
+
+        return $this;
     }
 }

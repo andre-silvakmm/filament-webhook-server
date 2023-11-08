@@ -19,11 +19,12 @@ trait helper
         return $models;
     }
 
-    public function payload(Model $model, $event, $module, $dataOption = 'summary'): object|array
+    public function payload(Model $model, $event, $module, $dataOption = 'summary', $dataType = 'webhook'): object|array
     {
         return ApiResponseBuilder::create()
                                  ->setModel($model)
                                  ->setDataOption($dataOption)
+                                 ->setDataType($dataType)
                                  ->setEvent($event)
                                  ->setModule($module)
                                  ->generate();
