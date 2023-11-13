@@ -4,9 +4,12 @@ namespace Marjose123\FilamentWebhookServer;
 
 use Illuminate\Database\Eloquent\Model;
 use Marjose123\FilamentWebhookServer\Observers\ModelObserver;
+use ReflectionClass;
 use Spatie\LaravelPackageTools\Exceptions\InvalidPackage;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\ModelInfo\ModelFinder;
+use Spatie\ModelInfo\ModelInfo;
 
 class FilamentWebhookServerServiceProvider extends PackageServiceProvider
 {
@@ -49,14 +52,32 @@ class FilamentWebhookServerServiceProvider extends PackageServiceProvider
     private static function registerGlobalObserver(): void
     {
         /** @var Model[] $MODELS */
-        $MODELS = [
-            config('filament-webhook-server.models'),
-        ];
+        // $MODELS = [
+        //     config('filament-webhook-server.models'),
+        // ];
 
-        foreach ($MODELS as $MODEL) {
-            foreach ($MODEL as $model) {
-                $model::observe(ModelObserver::class);
+        $MODELS = [];
+
+        $models = ModelFinder::all();
+        foreach ($models as $m) {
+            $reflectionClass = new ReflectionClass($m);
+
+            $traits = array_keys($reflectionClass->getTraits());
+
+            if (in_array('App\Traits\SyncableModel', $traits)) {
+                $MODELS[] = $m;
+                $m::observe(ModelObserver::class);
             }
         }
+
+        config(['filament-webhook-server.models' => $MODELS]);
+
+        // dd($models);
+
+        // foreach ($MODELS as $MODEL) {
+        //     foreach ($MODEL as $model) {
+        //         $model::observe(ModelObserver::class);
+        //     }
+        // }
     }
 }

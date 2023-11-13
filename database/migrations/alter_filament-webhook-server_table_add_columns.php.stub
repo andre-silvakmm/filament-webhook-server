@@ -9,6 +9,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('filament_webhook_servers', function (Blueprint $table) {
+            $table->string('name')->unique()->change();
+            $table->string('model')->nullable(true)->change();
             $table->boolean('sync')->nullable(false)->default(false);
             $table->string('data_type')->nullable(false)->default('webhook');
         });
@@ -17,6 +19,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('filament_webhook_servers', function (Blueprint $table) {
+            $table->string('name')->change();
+            $table->string('model')->nullable(false)->change();
             $table->dropColumn('sync');
             $table->dropColumn('data_type');
         });

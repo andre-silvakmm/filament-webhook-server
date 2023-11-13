@@ -32,15 +32,13 @@ class HookJobProcess
         foreach ($this->search as $webhookClient) {
             $webhook = WebhookCall::create()
                 ->url($webhookClient->url)
-                // ->maximumTries(3)
                 ->meta(['webhookClient' => $webhookClient->id])
                 ->doNotSign()
                 ->useHttpVerb($webhookClient->method)
                 ->verifySsl($webhookClient->verifySsl)
                 ->withHeaders($webhookClient->header)
-                ->payload($this->payload($this->model, $this->event, $this->module, $webhookClient->data_option, $webhookClient->data_type));
-            // ->throwExceptionOnFailure()
-            // ->payload($webhookClient->data_option);
+                ->payload($this->payload($this->model, $this->event, $this->module, $webhookClient->data_option, $webhookClient->data_type))
+                ->throwExceptionOnFailure();
 
             if ($webhookClient->sync) {
                 $webhook->dispatchSync();

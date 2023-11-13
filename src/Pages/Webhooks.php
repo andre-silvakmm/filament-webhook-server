@@ -100,38 +100,68 @@ class Webhooks extends Page implements HasTable
         return [
             Grid::make(2)->schema(
                 [
-                    TextInput::make('name')->minLength(2)->maxLength(255)->required(),
+                    TextInput::make('name')->minLength(2)->maxLength(255)->required()->live()
+                        ->afterStateUpdated(function ($state, $set) {
+                            $set('sync', false);
+                            $set('model', null);
+                            $set('method', 'post');
+                            $set('data_type', 'webhook');
+                            $set('data_option', 'custom');
+                        }),
                     Textarea::make('description')->required(),
                     TextInput::make('url')->label('Url to Notify')->url()->required()->columnSpan(2),
-                    Select::make('method')->options(
-                        [
-                            'post' => 'Post',
-                            'get' => 'Get',
-                            'put' => 'Put',
-                            'patch' => 'Patch',
-                        ]
-                    )->required(),
+                    Select::make('method')
+                        ->disabled(fn ($get) => $get('name') === 'sync')
+                        ->options(
+                            [
+                                'post' => 'Post',
+                                'get' => 'Get',
+                                'put' => 'Put',
+                                'patch' => 'Patch',
+                            ]
+                        )->required(),
                     Toggle::make('sync')
-                        ->inline(false),
-                    Select::make('model')->options($this->getAllModelNames())->required()->columnSpan(2),
+                        ->disabled(fn ($get) => $get('name') === 'sync')
+                        ->inline(false)
+                        ->live(),
+                    Select::make('model')
+                        ->options($this->getAllModelNames())
+                        ->required(fn ($get) => $get('name') !== 'sync')
+                        ->disabled(fn ($get) => $get('name') === 'sync')
+                        ->columnSpan(2)
+                        ->live(),
                     KeyValue::make('header')->columnSpan(2),
-                    Select::make('data_type')->options([
-                        'webhook' => 'Webhook',
-                        'custom' => 'Custom'
-                    ])->required()->columnSpan(2),
-                    Radio::make('data_option')->options(
-                        [
-                            'all' => 'All Model Data',
-                            'summary' => 'Summary',
-                            'custom' => 'Custom',
-                        ]
-                    )->descriptions(
-                        [
-                            'all' => 'All Data of the event triggered',
-                            'summary' => 'Push only the ID if the record that trigger an event and its timestamp',
-                            'custom' => 'Only data defined on model`s toWebhookPayload method',
-                        ]
-                    )->columns(2)->required()->columnSpan(2),
+                    Select::make('data_type')
+                        ->options(
+                            fn ($get) => match ($get('name')) {
+                                'sync' => [
+                                    'webhook' => 'Webhook',
+                                ],
+                                default => [
+                                    'webhook' => 'Webhook',
+                                    'custom' => 'Custom'
+                                ]
+                            }
+                        )->required()->columnSpan(2)->live(),
+                    Radio::make('data_option')
+                        ->options(
+                            fn ($get) => match ($get('name')) {
+                                'sync' => [
+                                    'custom' => 'Custom',
+                                ],
+                                default => [
+                                    'all' => 'All Model Data',
+                                    'summary' => 'Summary',
+                                    'custom' => 'Custom',
+                                ]
+                            }
+                        )->descriptions(
+                            [
+                                'all' => 'All Data of the event triggered',
+                                'summary' => 'Push only the ID if the record that trigger an event and its timestamp',
+                                'custom' => 'Only data defined on model`s toWebhookPayload method',
+                            ]
+                        )->columns(2)->required()->columnSpan(2)->live(),
                     CheckboxList::make('events')
                         ->options([
                             'created' => 'Created',

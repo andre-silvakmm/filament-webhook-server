@@ -73,11 +73,15 @@ class ApiResponseBuilder
                 ? (object)$this->model->toWebhookPayload() : [],
             default => [],
         };
+
+        if ($this->event === 'created') {
+            $payload = (object)$this->model->attributesToArray();
+        }
+
         $apiResponse = [
             'event' => $this->event ?? null,
             'module' => $this->module,
             'triggered_at' => Carbon::now()->timezone(config('app.timezone')),
-            'tenant' => tenant() !== null ? tenant()->id : 'central',
             'data' => $payload,
         ];
 
