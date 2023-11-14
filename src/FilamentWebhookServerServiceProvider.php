@@ -64,7 +64,7 @@ class FilamentWebhookServerServiceProvider extends PackageServiceProvider
 
             $traits = array_keys($reflectionClass->getTraits());
 
-            if (in_array('App\Traits\SyncableModel', $traits)) {
+            if (in_array(\Marjose123\FilamentWebhookServer\Traits\SyncableModel::class, $traits)) {
                 $MODELS[] = $m;
                 $m::observe(ModelObserver::class);
             }

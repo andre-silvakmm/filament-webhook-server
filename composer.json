@@ -45,7 +45,8 @@
             "Marjose123\\FilamentWebhookServer\\Database\\Factories\\": "database/factories"
         },
         "files": [
-            "src/Traits/helper.php"
+            "src/Traits/helper.php",
+            "src/Traits/SyncableModel.php"
         ]
     },
     "autoload-dev": {
