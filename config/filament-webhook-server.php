@@ -10,6 +10,7 @@ return [
     'models' => [
         \App\Models\User::class,
     ],
+    'events' => [],
     /*
      */
     'polling' => '10s',

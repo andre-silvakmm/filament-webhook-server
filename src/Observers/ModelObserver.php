@@ -18,8 +18,10 @@ class ModelObserver
             /*
              * Search on the DB that want to receive webhook from this model
              */
-            $search = FilamentWebhookServer::query()->whereJsonContains('events', ['created'])->where('model', '=', $module)->get();
-            $syncable = FilamentWebhookServer::query()->whereJsonContains('events', ['created'])->where('name', '=', 'sync')->get();
+            // $search = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['created'])->where('model', '=', $module)->get();
+            // $syncable = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['created'])->where('name', '=', 'sync')->get();
+            $webhook = $this->getWebhookServer(['created'], $module);
+            $syncable = $this->getWebhookServer(['created'], 'sync');
 
             $hasSyncableTrait = $modelInfo->traits->first(function (string $value) {
                 return $value === \App\Traits\SyncableModel::class;
@@ -32,11 +34,11 @@ class ModelObserver
             }
 
             if ($sync) {
-                if ($search) {
+                if ($webhook) {
                     /*
                 * Send to Job Process
                 */
-                    (new HookJobProcess($search, $model, 'created', $module))->send();
+                    (new HookJobProcess($webhook, $model, 'created', $module))->send();
                 }
 
                 /*
@@ -58,8 +60,10 @@ class ModelObserver
             /*
              * Search on the DB that want to receive webhook from this model
              */
-            $search = FilamentWebhookServer::query()->whereJsonContains('events', ['updated'])->where('model', '=', $module)->get();
-            $syncable = FilamentWebhookServer::query()->whereJsonContains('events', ['updated'])->where('name', '=', 'sync')->get();
+            // $search = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['updated'])->where('model', '=', $module)->get();
+            // $syncable = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['updated'])->where('name', '=', 'sync')->get();
+            $webhook = $this->getWebhookServer(['updated'], $module);
+            $syncable = $this->getWebhookServer(['updated'], 'sync');
 
             $sync = true;
 
@@ -75,11 +79,11 @@ class ModelObserver
             }
 
             if ($sync) {
-                if ($search) {
+                if ($webhook) {
                     /*
                     * Send to Job Process
                     */
-                    (new HookJobProcess($search, $model, 'updated', $module))->send();
+                    (new HookJobProcess($webhook, $model, 'updated', $module))->send();
                 }
 
                 /*
@@ -101,8 +105,10 @@ class ModelObserver
             /*
              * Search on the DB that want to receive webhook from this model
              */
-            $search = FilamentWebhookServer::query()->whereJsonContains('events', ['deleted'])->where('model', '=', $module)->get();
-            $syncable = FilamentWebhookServer::query()->whereJsonContains('events', ['deleted'])->where('name', '=', 'sync')->get();
+            // $search = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['deleted'])->where('model', '=', $module)->get();
+            // $syncable = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['deleted'])->where('name', '=', 'sync')->get();
+            $webhook = $this->getWebhookServer(['deleted'], $module);
+            $syncable = $this->getWebhookServer(['deleted'], 'sync');
 
             $hasSyncableTrait = $modelInfo->traits->first(function (string $value) {
                 return $value === \App\Traits\SyncableModel::class;
@@ -118,8 +124,8 @@ class ModelObserver
                 /*
                 * Send to Job Process
                 */
-                if ($search) {
-                    (new HookJobProcess($search, $model, 'deleted', $module))->send();
+                if ($webhook) {
+                    (new HookJobProcess($webhook, $model, 'deleted', $module))->send();
                 }
 
                 /*
@@ -141,8 +147,10 @@ class ModelObserver
             /*
             * Search on the DB that want to receive webhook from this model
             */
-            $search = FilamentWebhookServer::query()->whereJsonContains('events', ['restored'])->where('model', '=', $module)->get();
-            $syncable = FilamentWebhookServer::query()->whereJsonContains('events', ['restored'])->where('name', '=', 'sync')->get();
+            // $search = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['restored'])->where('model', '=', $module)->get();
+            // $syncable = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['restored'])->where('name', '=', 'sync')->get();
+            $webhook = $this->getWebhookServer(['restored'], $module);
+            $syncable = $this->getWebhookServer(['restored'], 'sync');
 
             $hasSyncableTrait = $modelInfo->traits->first(function (string $value) {
                 return $value === \App\Traits\SyncableModel::class;
@@ -158,8 +166,8 @@ class ModelObserver
                 /*
                 * Send to Job Process
                 */
-                if ($search) {
-                    (new HookJobProcess($search, $model, 'restored', $module))->send();
+                if ($webhook) {
+                    (new HookJobProcess($webhook, $model, 'restored', $module))->send();
                 }
 
                 if ($syncable !== null) {
@@ -181,8 +189,10 @@ class ModelObserver
             /*
              * Search on the DB that want to receive webhook from this model
              */
-            $search = FilamentWebhookServer::query()->whereJsonContains('events', ['forceDeleted'])->where('model', '=', $module)->get();
-            $syncable = FilamentWebhookServer::query()->whereJsonContains('events', ['forceDeleted'])->where('name', '=', 'sync')->get();
+            // $search = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['forceDeleted'])->where('model', '=', $module)->get();
+            // $syncable = FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', ['forceDeleted'])->where('name', '=', 'sync')->get();
+            $webhook = $this->getWebhookServer(['forceDeleted'], $module);
+            $syncable = $this->getWebhookServer(['forceDeleted'], 'sync');
 
             $hasSyncableTrait = $modelInfo->traits->first(function (string $value) {
                 return $value === \App\Traits\SyncableModel::class;
@@ -198,8 +208,8 @@ class ModelObserver
                 /*
                 * Send to Job Process
                 */
-                if ($search) {
-                    (new HookJobProcess($search, $model, 'forceDeleted', $module))->send();
+                if ($webhook) {
+                    (new HookJobProcess($webhook, $model, 'forceDeleted', $module))->send();
                 }
 
                 /*
@@ -211,5 +221,10 @@ class ModelObserver
             }
         } catch (\Exception $e) {
         }
+    }
+
+    private function getWebhookServer(array $events, $model)
+    {
+        return FilamentWebhookServer::query()->where('ativo', true)->whereJsonContains('events', $events)->where('model', '=', $model)->get();
     }
 }

@@ -5,7 +5,7 @@ return [
         'heading' => 'Webhook',
         'navigation' => [
             'label' => 'Webhook',
-            'group' => 'Developer',
+            'group' => 'Saída',
         ],
         'button' => [
             'add_new_webhook' => 'Add New Webhook',

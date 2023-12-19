@@ -3,6 +3,7 @@
 namespace Marjose123\FilamentWebhookServer\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
@@ -129,6 +130,8 @@ class Webhooks extends Page implements HasTable
                         ->required(fn ($get) => $get('name') !== 'sync')
                         ->disabled(fn ($get) => $get('name') === 'sync')
                         ->columnSpan(2)
+                        ->native(false)
+                        ->searchable()
                         ->live(),
                     KeyValue::make('header')->columnSpan(2),
                     Select::make('data_type')
@@ -163,15 +166,20 @@ class Webhooks extends Page implements HasTable
                             ]
                         )->columns(2)->required()->columnSpan(2)->live(),
                     CheckboxList::make('events')
+                        ->label('Eventos')
                         ->options([
                             'created' => 'Created',
                             'updated' => 'Updated',
                             'deleted' => 'Deleted',
                             'restored' => 'Restored',
                             'forceDeleted' => 'Force Deleted',
+                            'custom' => 'Custom',
                         ])
-                        ->columns(2),
-                    Radio::make('verifySsl')->label('Verify SSL?')->boolean()->inline()->required(),
+                        // ->disableOptionWhen(fn (string $value): bool => $value !== 'custom')
+                        // ->in(fn (CheckboxList $component): array => array_keys($component->getEnabledOptions()))
+                        ->columns(2)
+                        ->bulkToggleable(),
+                    Radio::make('verifySsl')->label('SSL?')->boolean()->inline()->required(),
 
                 ]
             ),
