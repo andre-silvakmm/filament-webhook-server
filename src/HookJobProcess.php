@@ -37,7 +37,7 @@ class HookJobProcess
                 ->meta(['webhookClient' => $webhookClient->id])
                 ->doNotSign()
                 ->useHttpVerb($webhookClient->method)
-                ->verifySsl($webhookClient->verifySsl)
+                ->verifySsl((bool) $webhookClient->verifySsl)
                 ->withHeaders($webhookClient->header)
                 ->payload($payload)
                 ->throwExceptionOnFailure();
