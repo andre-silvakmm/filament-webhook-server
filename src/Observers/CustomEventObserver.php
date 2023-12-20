@@ -8,12 +8,12 @@ use Spatie\ModelInfo\ModelInfo;
 
 class CustomEventObserver
 {
-    public function handle($model)
+    public function handle($model, $evento)
     {
         $modelInfo = ModelInfo::forModel($model::class);
         $module = $modelInfo->class;
 
-        $webhookEvents = FilamentWebhookServer::whereJsonContains('custom_events', [((string) $model->id)])->get();
+        $webhookEvents = FilamentWebhookServer::whereJsonContains('custom_events', [((string) $evento->id)])->get();
         (new HookJobProcess($webhookEvents, $model, $model->descricao, $module))->send();
     }
 }
