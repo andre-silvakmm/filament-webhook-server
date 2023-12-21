@@ -9,8 +9,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('filament_webhook_servers', function (Blueprint $table) {
-            $table->boolean('ativo');
-            $table->json('custom_data_option');
+            $table->boolean('ativo')->default(true);
+            $table->json('custom_data_option')->nullable(true);
+            $table->json('custom_events')->nullable(true);
         });
     }
 
@@ -19,6 +20,7 @@ return new class extends Migration
         Schema::table('filament_webhook_servers', function (Blueprint $table) {
             $table->dropColumn('ativo');
             $table->dropColumn('custom_data_option');
+            $table->dropColumn('custom_events');
         });
     }
 };
