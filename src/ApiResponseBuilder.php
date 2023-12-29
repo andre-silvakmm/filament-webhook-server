@@ -32,8 +32,6 @@ class ApiResponseBuilder
 
     public function generate()
     {
-        // dd($this->model);
-
         $payload = match ($this->dataOption) {
             'summary' => [
                 'id'         => $this->model->id ?? $this->model->uuid ?? null,
@@ -75,8 +73,6 @@ class ApiResponseBuilder
         foreach ($this->customDataOption as $key => $value) {
             $this->checkKeyType($key, $value, $obj, $this->customDataOption, $this->model);
         }
-
-        dd($obj);
 
         return $obj;
     }
