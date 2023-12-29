@@ -22,7 +22,7 @@ class ApiResponseBuilder
 
     private ?string $module;
 
-    private ?string $customDataOption;
+    private ?array $customDataOption;
 
     public static function create(): ApiResponseBuilder
     {
@@ -71,17 +71,17 @@ class ApiResponseBuilder
 
     private function createCustomDataOption()
     {
-        $customDataOption = json_decode($this->customDataOption, true);
-
         $obj = [];
-        foreach ($customDataOption as $key => $value) {
-            $this->checkKeyType($key, $value, $obj, json_decode($this->customDataOption, true), $this->model);
+        foreach ($this->customDataOption as $key => $value) {
+            $this->checkKeyType($key, $value, $obj, $this->customDataOption, $this->model);
         }
+
+        dd($obj);
 
         return $obj;
     }
 
-    private function checkKeyType($key, $value, &$obj, $customDataOption, $model)
+    private function checkKeyType($key, $value, &$obj, $customDataOption, $model, $globalModel = false)
     {
         $varType = explode(':', $key);
 
@@ -89,22 +89,22 @@ class ApiResponseBuilder
 
         switch ($varType[1]) {
             case 'int':
-                $value = data_get($model, $valueKey, null);
+                $value = data_get($globalModel ? $this->model : $model, $valueKey, null);
 
                 $obj[$varType[0]] = (int) $value;
                 break;
             case 'float':
-                $value = data_get($model, $valueKey, null);
+                $value = data_get($globalModel ? $this->model : $model, $valueKey, null);
 
                 $obj[$varType[0]] = (float) $value;
                 break;
             case 'string':
-                $value = data_get($model, $valueKey, null);
+                $value = data_get($globalModel ? $this->model : $model, $valueKey, null);
 
                 $obj[$varType[0]] = (string) $value;
                 break;
             case 'bool':
-                $value = data_get($model, $valueKey, null);
+                $value = data_get($globalModel ? $this->model : $model, $valueKey, null);
 
                 $obj[$varType[0]] = (bool) $value;
                 break;
@@ -114,11 +114,11 @@ class ApiResponseBuilder
                 $datasource = $valueKey['datasource'];
                 $mapping = $valueKey['mapping'];
 
-                $data = data_get($model, $datasource, null);
+                $data = data_get($globalModel ? $this->model : $model, $datasource, null);
 
                 $o = [];
                 foreach ($mapping as $keyMap => $mapItem) {
-                    $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $data);
+                    $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $data, $globalModel);
                 }
 
                 $obj[$varType[0]] = $o;
@@ -130,12 +130,12 @@ class ApiResponseBuilder
                 $datasource = $valueKey['datasource'];
                 $mapping = $valueKey['mapping'];
 
-                $data = data_get($model, $datasource, null) ?? [];
+                $data = data_get($globalModel ? $this->model : $model, $datasource, null) ?? [];
 
                 foreach ($data as $dataItem) {
                     $o = [];
                     foreach ($mapping as $keyMap => $mapItem) {
-                        $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $dataItem);
+                        $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $dataItem, $globalModel);
                     }
 
                     $obj[$varType[0]][] = $o;
@@ -144,6 +144,30 @@ class ApiResponseBuilder
                 break;
             case 'raw':
                 $obj[$varType[0]] = $valueKey;
+                break;
+            case 'custom':
+                $obj[$varType[0]] = [];
+
+                $o = [];
+                foreach ($valueKey as $key => $value) {
+                    $this->checkKeyType($key, $value, $o, $valueKey, $this->model, true);
+                }
+
+                $obj[$varType[0]] = $o;
+
+                break;
+            case 'customArray':
+                $obj[$varType[0]] = [];
+
+                foreach ($valueKey as $value) {
+                    $o = [];
+                    foreach ($value as $keyMap => $mapItem) {
+                        $this->checkKeyType($keyMap, $mapItem, $o, $value,  $this->model, true);
+                    }
+
+                    $obj[$varType[0]] = $o;
+                }
+
                 break;
             default:
                 break;
@@ -204,9 +228,9 @@ class ApiResponseBuilder
      *
      * @return  self
      */
-    public function setCustomDataOption($customDataOpion)
+    public function setCustomDataOption($customDataOption)
     {
-        $this->customDataOption = $customDataOpion;
+        $this->customDataOption = $customDataOption;
 
         return $this;
     }
