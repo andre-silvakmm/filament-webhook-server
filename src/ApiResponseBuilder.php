@@ -114,7 +114,7 @@ class ApiResponseBuilder
 
                 $o = [];
                 foreach ($mapping as $keyMap => $mapItem) {
-                    $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $data, $globalModel);
+                    $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $data, false);
                 }
 
                 $obj[$varType[0]] = $o;
@@ -131,7 +131,7 @@ class ApiResponseBuilder
                 foreach ($data as $dataItem) {
                     $o = [];
                     foreach ($mapping as $keyMap => $mapItem) {
-                        $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $dataItem, $globalModel);
+                        $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $dataItem, false);
                     }
 
                     $obj[$varType[0]][] = $o;
