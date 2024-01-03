@@ -87,15 +87,52 @@ class ApiResponseBuilder
             case 'int':
                 $value = data_get($globalModel ? $this->model : $model, $valueKey, null);
 
+                if (gettype($value) === 'array') {
+                    $val = 0;
+                    foreach ($value as $key => $v) {
+                        $val += $v;
+                    }
+
+                    $value = $val;
+                }
+
                 $obj[$varType[0]] = (int) $value;
                 break;
             case 'float':
                 $value = data_get($globalModel ? $this->model : $model, $valueKey, null);
 
+                if (gettype($value) === 'array') {
+                    $val = 0.0;
+                    foreach ($value as $key => $v) {
+                        $val += $v;
+                    }
+
+                    $value = $val;
+                }
+
                 $obj[$varType[0]] = (float) $value;
                 break;
             case 'string':
                 $value = data_get($globalModel ? $this->model : $model, $valueKey, null);
+
+                if (gettype($value) === 'array') {
+                    $val = '';
+                    foreach ($value as $key => $v) {
+                        $val .= $v;
+
+                        if (($key + 1) < sizeof($value)) {
+                            $separator = '|';
+
+                            if (sizeof($varType) > 2) {
+                                $separator = $varType[2];
+                            }
+
+                            $val .= $separator;
+                        }
+                    }
+
+                    $value = $val;
+                }
 
                 $obj[$varType[0]] = (string) $value;
                 break;
@@ -130,9 +167,8 @@ class ApiResponseBuilder
 
                 foreach ($data as $dataItem) {
                     $o = [];
-                    foreach ($mapping as $keyMap => $mapItem) {
-                        $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $dataItem, false);
-                    }
+
+                    $this->iterateArray($dataItem, $mapping, $o);
 
                     $obj[$varType[0]][] = $o;
                 }
@@ -170,6 +206,19 @@ class ApiResponseBuilder
         }
 
         return $obj;
+    }
+
+    private function iterateArray($dataItem, $mapping, &$o)
+    {
+        if ($dataItem instanceof \Illuminate\Database\Eloquent\Collection) {
+            foreach ($dataItem as $subDataItem) {
+                $this->iterateArray($subDataItem, $mapping, $o);
+            }
+        } else {
+            foreach ($mapping as $keyMap => $mapItem) {
+                $this->checkKeyType($keyMap, $mapItem, $o, $mapping, $dataItem, false);
+            }
+        }
     }
 
     public function setModel(Model $model): static
