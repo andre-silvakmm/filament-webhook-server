@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use stdClass;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ApiResponseBuilder
 {
@@ -199,6 +200,40 @@ class ApiResponseBuilder
 
                     $obj[$varType[0]] = $o;
                 }
+
+                break;
+            case 'math':
+                $obj[$varType[0]] = [];
+                $math = $varType[2];
+
+                $value = data_get($globalModel ? $this->model : $model, $valueKey, null);
+
+                if (gettype($value) === 'array') {
+                    $val = [];
+                    foreach ($value as $key => $v) {
+                        $val[] = $v;
+                    }
+
+                    $value = $val;
+                }
+
+                $obj[$varType[0]] = $math($value);
+
+                break;
+            case 'expr':
+                $obj[$varType[0]] = [];
+
+                $vars = $valueKey['vars'];
+
+                $v = [];
+                foreach ($vars as $key => $var) {
+                    $v[$key] =  data_get($this->model, $var, null);
+                }
+
+                $expressionLanguage = new ExpressionLanguage();
+                $res = $expressionLanguage->evaluate($valueKey['expr'], $v);
+
+                $obj[$varType[0]] = $res;
 
                 break;
             default:
