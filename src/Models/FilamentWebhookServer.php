@@ -21,14 +21,16 @@ class FilamentWebhookServer extends Model
         'data_type',
         'ativo',
         'custom_data_option',
-        'custom_events'
+        'custom_events',
+        'url_params'
     ];
 
     protected $casts = [
         'header' => 'array',
         'events' => 'array',
         'custom_data_option' => 'array',
-        'custom_events' => 'array'
+        'custom_events' => 'array',
+        'url_params' => 'array'
     ];
 
     public function transactionlogs()
