@@ -33,6 +33,7 @@ class FilamentWebhookServerServiceProvider extends PackageServiceProvider
                 '2023_01_19_144816_create_filament_webhook_server_histories_table',
                 'alter_filament-webhook-server_table_add_columns',
                 'alter_table_filament-webhook-server_add_custom_columns',
+                '2024_01_04_125547_alter_table_filament_webhook_add_column_url_params',
             ])
             ->hasViews();
     }
@@ -96,7 +97,7 @@ class FilamentWebhookServerServiceProvider extends PackageServiceProvider
                                     ->send();
                             }
                         })
-                        // ->visible(fn ($livewire) => self::modelHasTrait($livewire->getModel(), \Marjose123\FilamentWebhookServer\Traits\SyncableModel::class))
+                    // ->visible(fn ($livewire) => self::modelHasTrait($livewire->getModel(), \Marjose123\FilamentWebhookServer\Traits\SyncableModel::class))
                 ])
                 ->striped()
                 ->deferLoading();

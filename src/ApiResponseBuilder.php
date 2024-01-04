@@ -68,7 +68,7 @@ class ApiResponseBuilder
         return json_decode(json_encode($payload), true); //$apiReponse;
     }
 
-    private function createCustomDataOption()
+    public function createCustomDataOption()
     {
         $obj = [];
         foreach ($this->customDataOption as $key => $value) {
@@ -78,9 +78,13 @@ class ApiResponseBuilder
         return $obj;
     }
 
-    private function checkKeyType($key, $value, &$obj, $customDataOption, $model, $globalModel = false)
+    public function checkKeyType($key, $value, &$obj, $customDataOption, $model, $globalModel = false)
     {
         $varType = explode(':', $key);
+
+        if (sizeof($varType) === 1) {
+            $varType[1] = 'string';
+        }
 
         $valueKey = $customDataOption[$key];
 

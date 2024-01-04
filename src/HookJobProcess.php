@@ -32,8 +32,21 @@ class HookJobProcess
         foreach ($this->search as $webhookClient) {
             $payload = $this->payload($this->model, $this->event, $this->module, $webhookClient->data_option, $webhookClient->data_type, $webhookClient->custom_data_option);
 
+            $responseBuilder = new ApiResponseBuilder();
+            $responseBuilder->setModel($this->model);
+
+            $o = [];
+            foreach ($webhookClient->url_params as $key => $param) {
+                $responseBuilder->checkKeyType($key, $param, $o, $webhookClient->url_params, $this->model, true);
+            }
+
+            $url = $webhookClient->url;
+            foreach ($o as $key => $value) {
+                $url = str_replace('{' . $key . '}', $value, $url);
+            }
+
             $webhook = WebhookCall::create()
-                ->url($webhookClient->url)
+                ->url($url)
                 ->meta(['webhookClient' => $webhookClient->id])
                 ->doNotSign()
                 ->useHttpVerb($webhookClient->method)
