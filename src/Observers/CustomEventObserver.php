@@ -13,7 +13,7 @@ class CustomEventObserver
         $modelInfo = ModelInfo::forModel($model::class);
         $module = $modelInfo->class;
 
-        $webhookEvents = FilamentWebhookServer::whereJsonContains('custom_events', [((string) $evento->id)])->get();
+        $webhookEvents = FilamentWebhookServer::where('ativo', true)->whereJsonContains('custom_events', [((string) $evento->id)])->get();
         (new HookJobProcess($webhookEvents, $model, $model->descricao, $module))->send();
     }
 }
