@@ -227,6 +227,7 @@ class ApiResponseBuilder
             case 'expr':
                 $obj[$varType[0]] = [];
 
+                // obtem variaveis decladas da expressao
                 $vars = $valueKey['vars'];
 
                 $v = [];
@@ -236,6 +237,43 @@ class ApiResponseBuilder
 
                 $expressionLanguage = new ExpressionLanguage();
                 $res = $expressionLanguage->evaluate($valueKey['expr'], $v);
+
+                // verifica se existe extrator
+                if (array_key_exists('extract', $valueKey)) {
+                    $extractKey = $valueKey['extract'];
+
+                    $ex = null;
+
+                    if (gettype($extractKey) === 'string') {
+                        $ex = function ($r) use ($extractKey) {
+                            return $r->$extractKey;
+                        };
+                    }
+
+                    if (gettype($extractKey) === 'array') {
+                        $ex = function ($r) use ($extractKey) {
+                            $o = [];
+
+                            foreach ($extractKey as $key => $value) {
+                                $this->checkKeyType($key, $value, $o, $extractKey, $r, false);
+                            }
+
+                            return $o;
+                        };
+                    }
+
+                    if (gettype($res) === 'array') {
+                        $v = [];
+
+                        foreach ($res as $key => $r) {
+                            $v[] = $ex($r);
+                        }
+
+                        $res = $v;
+                    } else {
+                        $res = $res->$extractKey;
+                    }
+                }
 
                 $obj[$varType[0]] = $res;
 
