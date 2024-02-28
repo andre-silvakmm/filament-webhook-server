@@ -202,7 +202,7 @@ class ApiResponseBuilder
                         $this->checkKeyType($keyMap, $mapItem, $o, $value,  $this->model, true);
                     }
 
-                    $obj[$varType[0]] = $o;
+                    $obj[$varType[0]][] = $o;
                 }
 
                 break;
