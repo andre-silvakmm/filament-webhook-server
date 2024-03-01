@@ -17,6 +17,7 @@
     ],
     "require": {
         "php": "^8.0 || ^8.1 || ^8.2",
+        "andresilva/json-datamapping": "dev-main",
         "codeat3/blade-google-material-design-icons": "^1.18",
         "filament/filament": "^3.0",
         "illuminate/contracts": "^9.0 || ^10.0",
@@ -80,6 +81,12 @@
             }
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/Users/andresilva/dev/TOS/packages/andresilva/json-datamapping"
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true
 }
