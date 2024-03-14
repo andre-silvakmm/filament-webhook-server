@@ -52,7 +52,7 @@ class FilamentWebhookServerServiceProvider extends PackageServiceProvider
     {
         parent::boot();
         self::registerGlobalObserver();
-        self::configureTable();
+        // self::configureTable();
     }
 
     private static function configureTable()
