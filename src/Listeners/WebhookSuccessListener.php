@@ -15,12 +15,14 @@ class WebhookSuccessListener
     public function handle(WebhookCallSucceededEvent $event)
     {
         if (config('filament-webhook-server.webhook.keep_history')) {
+            $body = $event->response->getBody();
+
             try {
                 $webhookClientHistory = new FilamentWebhookServerHistory();
                 $webhookClientHistory->webhook_client = $event->meta['webhookClient'];
                 $webhookClientHistory->uuid = $event->uuid;
                 $webhookClientHistory->status_code = $event->response->getStatusCode();
-                $webhookClientHistory->errorMessage = '';
+                $webhookClientHistory->errorMessage = $body->getContents();
                 $webhookClientHistory->errorType = '';
                 $webhookClientHistory->attempt = $event->attempt;
                 $res = $webhookClientHistory->save();

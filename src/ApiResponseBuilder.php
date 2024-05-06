@@ -40,20 +40,18 @@ class ApiResponseBuilder
                 'created_at' => $this->model->created_at ?? Carbon::now()->timezone(config('app.timezone')),
                 'updated_at' => $this->model->updated_at ?? null,
             ],
-            'all' => (object)$this->model, //(object)$this->model->attributesToArray(),
-            // 'custom' => method_exists($this->model, 'toWebhookPayload')
-            //     ? (object)$this->model->toWebhookPayload() : [],
+            'all' => (object)$this->model,
             'custom' => $this->createCustomDataOption(),
             default => [],
         };
 
-        if ($this->event === 'created') {
-            $payload = (object)$this->model; //(object)$this->model->attributesToArray();
-        }
+        // if ($this->event === 'created') {
+        //     $payload = (object)$this->model;
+        // }
 
-        if ($this->event === 'sync') {
-            $payload = (object)$this->model;
-        }
+        // if ($this->event === 'sync') {
+        //     $payload = (object)$this->model;
+        // }
 
         $apiResponse = [
             'event' => $this->event ?? null,
@@ -66,12 +64,16 @@ class ApiResponseBuilder
             return json_decode(json_encode($apiResponse), true);
         }
 
-        return json_decode(json_encode($payload), true); //$apiReponse;
+        return json_decode(json_encode($payload), true);
     }
 
     public function createCustomDataOption()
     {
-        return JsonDataMapping::make($this->customDataOption, $this->model);
+        try {
+            return JsonDataMapping::make($this->customDataOption, $this->model);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function setModel(Model $model): static

@@ -34,6 +34,7 @@ class FilamentWebhookServerServiceProvider extends PackageServiceProvider
                 'alter_filament-webhook-server_table_add_columns',
                 'alter_table_filament-webhook-server_add_custom_columns',
                 '2024_01_04_125547_alter_table_filament_webhook_add_column_url_params',
+                '2024_05_03_122249_alter_webhook_server_table_add_regra_envio_column'
             ])
             ->hasViews();
     }
@@ -52,56 +53,6 @@ class FilamentWebhookServerServiceProvider extends PackageServiceProvider
     {
         parent::boot();
         self::registerGlobalObserver();
-        // self::configureTable();
-    }
-
-    private static function configureTable()
-    {
-        Table::configureUsing(modifyUsing: function (Table $table) {
-            $table
-                ->bulkActions([
-                    BulkAction::make('sync')
-                        ->icon('antdesign-cloud-sync-o')
-                        ->color('info')
-                        ->modalHeading('Sincronizar items')
-                        ->modalDescription('Deseja sincronizar os items selecionados?')
-                        ->requiresConfirmation()
-                        ->deselectRecordsAfterCompletion()
-                        ->modalIcon('antdesign-cloud-sync-o')
-                        ->action(function ($records, $livewire) {
-                            $syncable = FilamentWebhookServer::query()->where('name', '=', 'sync')->get();
-
-                            if ($syncable !== null) {
-                                foreach ($records as $record) {
-                                    $modelInfo = ModelInfo::forModel($record::class);
-
-                                    $relations = [];
-
-                                    foreach ($modelInfo->relations as $relation) {
-                                        $relations[] = $relation->name;
-                                    }
-
-                                    $item = $record->load($relations);
-
-                                    (new HookJobProcess($syncable, $item, 'sync', $livewire->getModel()))->send();
-                                }
-
-                                \Filament\Notifications\Notification::make()
-                                    ->title('Sincronia enviada com sucesso')
-                                    ->success()
-                                    ->send();
-                            } else {
-                                \Filament\Notifications\Notification::make()
-                                    ->title('Nenhum endpoint configurado para realizar sincronia')
-                                    ->danger()
-                                    ->send();
-                            }
-                        })
-                    // ->visible(fn ($livewire) => self::modelHasTrait($livewire->getModel(), \Marjose123\FilamentWebhookServer\Traits\SyncableModel::class))
-                ])
-                ->striped()
-                ->deferLoading();
-        }, isImportant: true);
     }
 
     private static function registerGlobalObserver(): void

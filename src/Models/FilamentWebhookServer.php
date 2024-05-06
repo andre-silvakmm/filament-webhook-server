@@ -22,7 +22,8 @@ class FilamentWebhookServer extends Model
         'ativo',
         'custom_data_option',
         'custom_events',
-        'url_params'
+        'url_params',
+        'regra_envio'
     ];
 
     protected $casts = [
@@ -30,7 +31,8 @@ class FilamentWebhookServer extends Model
         'events' => 'array',
         'custom_data_option' => 'array',
         'custom_events' => 'array',
-        'url_params' => 'array'
+        'url_params' => 'array',
+        'regra_envio' => 'array'
     ];
 
     public function transactionlogs()
