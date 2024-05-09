@@ -70,15 +70,15 @@ class HookJobProcess
 
                 $webhook = WebhookCall::create()
                     ->url($url)
-                    ->meta(['webhookClient' => $webhookClient->id])
+                    ->meta(['webhookClient' => $webhookClient->id, 'model' => $this->model->id])
                     ->doNotSign()
                     ->useHttpVerb($webhookClient->method)
                     ->verifySsl((bool) $webhookClient->verifySsl)
                     ->withHeaders($webhookClient->header)
                     ->payload($payload)
                     ->throwExceptionOnFailure();
-                    
-                    activity('Webhook Model Execution')
+
+                activity('Webhook Model Execution')
                     ->causedBy($this->model)
                     ->performedOn($webhookClient)
                     ->withProperties(['uuid' => $webhook->getUuid()])
