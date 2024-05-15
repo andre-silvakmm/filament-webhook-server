@@ -18,9 +18,9 @@ class EventServiceProvider extends ServiceProvider
         WebhookCallFailedEvent::class => [
             WebhookFailedListener::class,
         ],
-        FinalWebhookCallFailedEvent::class => [
-            WebhookFailedListener::class,
-        ],
+        // FinalWebhookCallFailedEvent::class => [
+        //     WebhookFailedListener::class,
+        // ],
     ];
 
     /**
