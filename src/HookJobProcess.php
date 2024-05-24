@@ -58,14 +58,17 @@ class HookJobProcess
                     ->event('process')
                     ->log('Webhook process');
 
-                $o = [];
-                foreach ($webhookClient->url_params as $key => $param) {
-                    $responseBuilder->checkKeyType($key, $param, $o, $webhookClient->url_params, $this->model, true);
-                }
-
                 $url = $webhookClient->url;
-                foreach ($o as $key => $value) {
-                    $url = str_replace('{' . $key . '}', $value, $url);
+
+                if ($webhookClient->url_params !== null) {
+                    $o = [];
+                    foreach ($webhookClient->url_params as $key => $param) {
+                        $responseBuilder->checkKeyType($key, $param, $o, $webhookClient->url_params, $this->model, true);
+                    }
+
+                    foreach ($o as $key => $value) {
+                        $url = str_replace('{' . $key . '}', $value, $url);
+                    }
                 }
 
                 $webhook = WebhookCall::create()
