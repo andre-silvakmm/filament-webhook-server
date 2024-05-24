@@ -26,6 +26,7 @@ class ModelObserver
                 (new HookJobProcess($webhook, $model, 'created', $module))->send();
             }
         } catch (\Exception $e) {
+            dd($e);
         }
     }
 
