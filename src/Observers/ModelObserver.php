@@ -26,7 +26,7 @@ class ModelObserver
                 (new HookJobProcess($webhook, $model, 'created', $module))->send();
             }
         } catch (\Exception $e) {
-            dd($e);
+            throw $e;
         }
     }
 
@@ -47,6 +47,7 @@ class ModelObserver
                 (new HookJobProcess($webhook, $model, 'updated', $module))->send();
             }
         } catch (\Exception $e) {
+            throw $e;
         }
     }
 
@@ -67,6 +68,7 @@ class ModelObserver
                 (new HookJobProcess($webhook, $model, 'deleted', $module))->send();
             }
         } catch (\Exception $e) {
+            throw $e;
         }
     }
 
@@ -87,6 +89,7 @@ class ModelObserver
                 (new HookJobProcess($webhook, $model, 'restored', $module))->send();
             }
         } catch (\Exception $e) {
+            throw $e;
         }
     }
 
@@ -107,6 +110,7 @@ class ModelObserver
                 (new HookJobProcess($webhook, $model, 'forceDeleted', $module))->send();
             }
         } catch (\Exception $e) {
+            throw $e;
         }
     }
 
