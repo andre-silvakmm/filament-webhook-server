@@ -60,15 +60,13 @@ class HookJobProcess
 
                 $url = $webhookClient->url;
 
-                if ($webhookClient->url_params !== null) {
-                    $o = [];
-                    foreach ($webhookClient->url_params as $key => $param) {
-                        $responseBuilder->checkKeyType($key, $param, $o, $webhookClient->url_params, $this->model, true);
-                    }
+                $params = $webhookClient->url_params;
 
-                    foreach ($o as $key => $value) {
-                        $url = str_replace('{' . $key . '}', $value, $url);
-                    }
+                if ($webhookClient->url_params !== null) {
+                    $url = preg_replace_callback('/\{(\w+)\}/', function ($matches) use ($params, $payload) {
+                        $key = $matches[1]; // Chave encontrada dentro do {}
+                        return $payload[$params[$key]] ?? $matches[0]; // Substitui pelo valor do payload
+                    }, $url);
                 }
 
                 $webhook = WebhookCall::create()
